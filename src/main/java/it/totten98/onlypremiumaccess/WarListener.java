@@ -39,12 +39,11 @@ public class WarListener implements Listener {
         Gson gson = new Gson();
         JsonObject jsonObject= gson.fromJson(jsonS.toString(), JsonObject.class);
         String id = jsonObject.get("id").toString().replace("\"", "");
-        System.out.println("\nid:\t" + id + "\nuuid:\t" + uuid);
 
         in.close();
 
         if (!id.equals(uuid)) {
-            player.kickPlayer("User not premium");
+            player.kickPlayer("Failed to login: User not premium");
         }
 
     }
