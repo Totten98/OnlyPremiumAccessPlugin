@@ -1,0 +1,10 @@
+name: OnlyPremiumAccessPlugin
+main: it.totten98.onlypremiumaccess.OnlyPremiumAccessMain
+api-version: 1.15
+load: STARTUP
+version: 1.0.0
+author: Naoss Team
+authors: [Totten98, axel9674, Dakrin]
+description: Plugin per server NaossCraft
+website: naoss.it
+prefix: OnlyPremiumAccessPlugin
