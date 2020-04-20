@@ -5,7 +5,7 @@ import com.google.gson.JsonObject;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerLoginEvent;
 
 import java.io.*;
 import java.net.URL;
@@ -20,9 +20,17 @@ public class WarListener implements Listener {
     }
 
     @EventHandler
-    public void onPlayerJoin(PlayerJoinEvent event) throws IOException {
-        Player player = event.getPlayer();
+    public void onPlayerLogin(PlayerLoginEvent event) throws IOException {
+        Player tryingToLogin = event.getPlayer();
 
+        if (!isPremium(tryingToLogin))
+            event.disallow(PlayerLoginEvent.Result.KICK_OTHER , "Failed to login: User not premium");
+        else
+            event.allow();
+
+    }
+
+    private boolean isPremium(Player player) throws IOException {
         String uuid = player.getUniqueId().toString().replace("-", "");
         String username = player.getName();
 
@@ -42,10 +50,7 @@ public class WarListener implements Listener {
 
         in.close();
 
-        if (!id.equals(uuid)) {
-            player.kickPlayer("Failed to login: User not premium");
-        }
-
+        return id.equals(uuid);
     }
 
 }
