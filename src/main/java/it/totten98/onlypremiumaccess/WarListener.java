@@ -8,6 +8,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerLoginEvent;
 
 import java.io.*;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 
@@ -36,21 +37,28 @@ public class WarListener implements Listener {
 
         StringBuilder jsonS = new StringBuilder();
         URL url = new URL("https://api.mojang.com/users/profiles/minecraft/" + username);
-        URLConnection conn = url.openConnection();
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.connect();
-        BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-        String inputLine;
 
-        while((inputLine = in.readLine()) != null) {
-            jsonS.append(inputLine);
+        if (conn.getResponseCode() == 200) {
+
+            BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+            String inputLine;
+
+            while ((inputLine = in.readLine()) != null) {
+                jsonS.append(inputLine);
+            }
+            Gson gson = new Gson();
+            JsonObject jsonObject = gson.fromJson(jsonS.toString(), JsonObject.class);
+            String name = jsonObject.get("name").toString().replace("\"", "");
+            String id = jsonObject.get("id").toString().replace("\"", "");
+
+            in.close();
+
+            return username.equals(name) && !id.isEmpty() && id.equals(uuid);
         }
-        Gson gson = new Gson();
-        JsonObject jsonObject= gson.fromJson(jsonS.toString(), JsonObject.class);
-        String id = jsonObject.get("id").toString().replace("\"", "");
 
-        in.close();
-
-        return id.equals(uuid);
+        return false;
     }
 
 }
